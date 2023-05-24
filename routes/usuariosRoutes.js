@@ -15,6 +15,7 @@ const {
   usuariosDelete,
   usuariosPatch,
 } = require('../controllers/usuariosController.js');
+const { validarJWT } = require('../middlewares/validarJWT.js');
 
 const router = Router();
 
@@ -52,7 +53,7 @@ router.patch('/', usuariosPatch);
 
 router.delete(
   '/:id',
-  [check('id').custom(existeUsuarioPorId), validarCampos],
+  [validarJWT, check('id').custom(existeUsuarioPorId), validarCampos],
   usuariosDelete
 );
 
