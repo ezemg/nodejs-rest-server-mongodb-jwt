@@ -1,13 +1,23 @@
+// Dependencias
 const { Router } = require('express');
 const { check } = require('express-validator');
 
-const { validarCampos } = require('../middlewares/validarCampos.js');
+// Middlewares =
+const {
+  validarCampos,
+  validarJWT,
+  tieneRole,
+  esAdminRole,
+} = require('../middlewares');
+
+// Helpers
 const {
   esRoleValido,
   emailExiste,
   existeUsuarioPorId,
 } = require('../helpers/db-validators.js');
 
+// Controlador
 const {
   usuariosGet,
   usuariosPut,
@@ -15,7 +25,6 @@ const {
   usuariosDelete,
   usuariosPatch,
 } = require('../controllers/usuariosController.js');
-const { validarJWT } = require('../middlewares/validarJWT.js');
 
 const router = Router();
 
@@ -53,7 +62,13 @@ router.patch('/', usuariosPatch);
 
 router.delete(
   '/:id',
-  [validarJWT, check('id').custom(existeUsuarioPorId), validarCampos],
+  [
+    validarJWT,
+    esAdminRole,
+    // tieneRole('ADMIN_ROLE', 'VENTAS_ROLE'),
+    check('id').custom(existeUsuarioPorId),
+    validarCampos,
+  ],
   usuariosDelete
 );
 
